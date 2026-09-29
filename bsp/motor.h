@@ -15,7 +15,7 @@
 #define MOTOR_0_IN1_PORT     GPIOB
 #define MOTOR_0_IN1_PIN      GPIO_PIN_12
 #define MOTOR_0_IN2_PORT     GPIOB
-#define MOTOR_0_IN2_PIN      GPIO_PIN_13
+#define MOTOR_0_IN2_PIN      GPIO_PIN_13   
 
 #define MOTOR_1_PWM_CHANNEL TIM_CHANNEL_1
 #define MOTOR_1_IN1_PORT     GPIOC
