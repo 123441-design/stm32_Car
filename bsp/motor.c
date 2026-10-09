@@ -82,5 +82,5 @@ void motor_set_pwm(uint8_t id, int16_t duty)
     }
 
     __HAL_TIM_SET_COMPARE(MOTOR_PWM_TIMER, channel,
-                          magnitude * period / MOTOR_PWM_MAX);
+                          (magnitude * period) / MOTOR_PWM_MAX);
 }

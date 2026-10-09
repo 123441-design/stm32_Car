@@ -101,10 +101,10 @@ int main(void)
 	motor_init();
 	
 	
-	motor_set_pwm(0,10);
-	motor_set_pwm(1,30);
-	motor_set_pwm(2,50);
-	motor_set_pwm(3,70);
+	//motor_set_pwm(0,50);
+	//motor_set_pwm(1,50);//??
+	//motor_set_pwm(2,50);
+	//motor_set_pwm(3,50);
 
 
   /* USER CODE END 2 */
