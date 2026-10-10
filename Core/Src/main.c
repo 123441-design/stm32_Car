@@ -20,12 +20,15 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 #include "motor.h"
+#include "ps2_usart5.h"
+
 
 /* USER CODE END Includes */
 
@@ -97,14 +100,15 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM6_Init();
   MX_TIM8_Init();
+  MX_UART5_Init();
   /* USER CODE BEGIN 2 */
 	motor_init();
+	ps2_usart5_start();
 	
-	
-	//motor_set_pwm(0,50);
-	//motor_set_pwm(1,50);//??
-	//motor_set_pwm(2,50);
-	//motor_set_pwm(3,50);
+//	motor_set_pwm(0,50);
+//	motor_set_pwm(1,50);//??
+//	motor_set_pwm(2,50);
+//	motor_set_pwm(3,50);
 
 
   /* USER CODE END 2 */

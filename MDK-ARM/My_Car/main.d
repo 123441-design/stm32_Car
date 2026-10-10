@@ -27,6 +27,7 @@ my_car\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 my_car\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 my_car\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 my_car\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
+my_car\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 my_car\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 my_car\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 my_car\main.o: ../Core/Inc/FreeRTOSConfig.h
@@ -42,5 +43,7 @@ my_car\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 my_car\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 my_car\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 my_car\main.o: ../Core/Inc/tim.h
+my_car\main.o: ../Core/Inc/usart.h
 my_car\main.o: ../Core/Inc/gpio.h
 my_car\main.o: ../bsp/motor.h
+my_car\main.o: ../bsp/ps2_usart5.h

@@ -36,6 +36,7 @@ my_car\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 my_car\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 my_car\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 my_car\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
+my_car\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
