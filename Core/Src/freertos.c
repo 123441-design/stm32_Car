@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "remote.h"
 
 /* USER CODE END Includes */
 
@@ -48,6 +49,7 @@
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
+osThreadId remoteTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -55,6 +57,7 @@ osThreadId defaultTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
+void StartRemoteTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -105,6 +108,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of remoteTask */
+  osThreadDef(remoteTask, StartRemoteTask, osPriorityNormal, 0, 256);
+  remoteTaskHandle = osThreadCreate(osThread(remoteTask), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -124,9 +131,31 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+    
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartRemoteTask */
+/**
+* @brief Function implementing the remoteTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartRemoteTask */
+void StartRemoteTask(void const * argument)
+{
+  /* USER CODE BEGIN StartRemoteTask */
+  /* Infinite loop */
+  for(;;)
+  {
+		/* 从 UART5 环形缓冲区取字符；凑齐一行后解析手柄数据。 */
+    remote_poll();
+		
+    osDelay(1);
+  }
+  /* USER CODE END StartRemoteTask */
 }
 
 /* Private application code --------------------------------------------------*/
