@@ -43,3 +43,5 @@ my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 my_car\freertos.o: ../app/remote.h
+my_car\freertos.o: ../app/control.h
+my_car\freertos.o: ../app/car.h

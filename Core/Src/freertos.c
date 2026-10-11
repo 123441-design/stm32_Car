@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "remote.h"
+#include "control.h"
 
 /* USER CODE END Includes */
 
@@ -46,6 +47,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+
+volatile uint32_t remote_stack_free_words = 0;
+
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -109,7 +113,7 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of remoteTask */
-  osThreadDef(remoteTask, StartRemoteTask, osPriorityNormal, 0, 256);
+  osThreadDef(remoteTask, StartRemoteTask, osPriorityNormal, 0, 128);
   remoteTaskHandle = osThreadCreate(osThread(remoteTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -148,13 +152,25 @@ void StartRemoteTask(void const * argument)
 {
   /* USER CODE BEGIN StartRemoteTask */
   /* Infinite loop */
-  for(;;)
-  {
-		/* 从 UART5 环形缓冲区取字符；凑齐一行后解析手柄数据。 */
-    remote_poll();
-		
-    osDelay(1);
-  }
+  
+ TickType_t last_check = xTaskGetTickCount();
+
+  for (;;)
+    {
+        remote_poll();
+        car_control_update(car_remote);
+
+        if ((xTaskGetTickCount() - last_check) >= pdMS_TO_TICKS(1000))
+        {
+            last_check = xTaskGetTickCount();
+            remote_stack_free_words = uxTaskGetStackHighWaterMark(NULL);
+        }
+
+        osDelay(1);
+    }
+
+   
+
   /* USER CODE END StartRemoteTask */
 }
 

@@ -567,6 +567,11 @@
           <GroupName>Application/User/App</GroupName>
           <Files>
             <File>
+              <FileName>control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../app/control.c</FilePath>
+            </File>
+            <File>
               <FileName>car.c</FileName>
               <FileType>1</FileType>
               <FilePath>../app/car.c</FilePath>

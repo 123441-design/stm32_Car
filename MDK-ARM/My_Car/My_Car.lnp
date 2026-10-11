@@ -11,6 +11,7 @@
 "my_car\motor.o"
 "my_car\ps2_usart5.o"
 "my_car\pid.o"
+"my_car\control.o"
 "my_car\car.o"
 "my_car\remote.o"
 "my_car\stm32f1xx_hal_gpio_ex.o"
