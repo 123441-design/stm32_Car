@@ -7,10 +7,10 @@ void motor_init(void)
     HAL_GPIO_WritePin(TB6612_1_STBY_PORT, TB6612_1_STBY_PIN, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(TB6612_2_STBY_PORT, TB6612_2_STBY_PIN, GPIO_PIN_RESET);
 
-    motor_set_pwm(0, 0);
-    motor_set_pwm(1, 0);
-    motor_set_pwm(2, 0);
-    motor_set_pwm(3, 0);
+    motor_set_pwm(0, 0);//左前
+    motor_set_pwm(1, 0);//右后
+    motor_set_pwm(2, 0);//左后
+    motor_set_pwm(3, 0);//右前
 
     if (HAL_TIM_PWM_Start(MOTOR_PWM_TIMER, MOTOR_0_PWM_CHANNEL) != HAL_OK ||
         HAL_TIM_PWM_Start(MOTOR_PWM_TIMER, MOTOR_1_PWM_CHANNEL) != HAL_OK ||

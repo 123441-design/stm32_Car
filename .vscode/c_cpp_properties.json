@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "name": "STM32F103RC (Keil)",
+            "includePath": [
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/bsp",
+                "${workspaceFolder}/control",
+                "${workspaceFolder}/app",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "D:/KEIL2026/Core/ARM/ARMCC/Include",
+                "D:/KEIL2026/Instrall_Package/ARM/CMSIS/6.1.0/CMSIS/Core/Include",
+                "D:/KEIL2026/Instrall_Package/KEIL_STM32Gxxx_DFP/STM32F1xx_DFP/2.4.1/Device/Include"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F103xE"
+            ],
+            "compilerPath": "",
+            "cStandard": "c99",
+            "intelliSenseMode": "windows-gcc-arm",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            }
+        }
+    ],
+    "version": 4
+}

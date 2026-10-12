@@ -3,7 +3,7 @@
 <title>Static Call Graph - [My_Car\My_Car.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image My_Car\My_Car.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sun Oct 11 21:06:03 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Oct 12 10:20:48 2026
 <BR><P>
 <H3>Maximum Stack Usage =        232 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1124,21 +1124,21 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xe.o(RESET)
 </UL>
-<P><STRONG><a name="[b9]"></a>car_backward</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, control.o(i.car_backward))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = car_backward &rArr; car_set_all_pwm &rArr; motor_set_pwm
+<P><STRONG><a name="[b4]"></a>car_control_update</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, control.o(i.car_control_update))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = car_control_update &rArr; car_stop &rArr; car_set_sides_pwm &rArr; motor_set_pwm
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_all_pwm
-</UL>
-<BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_control_update
-</UL>
-
-<P><STRONG><a name="[b4]"></a>car_control_update</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, control.o(i.car_control_update))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = car_control_update &rArr; car_backward &rArr; car_set_all_pwm &rArr; motor_set_pwm
-</UL>
-<BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_backward
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_all_pwm
+<BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_stop
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_sides_pwm
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartRemoteTask
+</UL>
+
+<P><STRONG><a name="[b9]"></a>car_stop</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, control.o(i.car_stop))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = car_stop &rArr; car_set_sides_pwm &rArr; motor_set_pwm
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_sides_pwm
+</UL>
+<BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_control_update
 </UL>
 
 <P><STRONG><a name="[5a]"></a>main</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, main.o(i.main))
@@ -1180,7 +1180,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 </UL>
 <BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_init
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_all_pwm
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_set_sides_pwm
 </UL>
 
 <P><STRONG><a name="[b1]"></a>osDelay</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, cmsis_os.o(i.osDelay))
@@ -1411,13 +1411,13 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[ba]"></a>car_set_all_pwm</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, control.o(i.car_set_all_pwm))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = car_set_all_pwm &rArr; motor_set_pwm
+<P><STRONG><a name="[ba]"></a>car_set_sides_pwm</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, control.o(i.car_set_sides_pwm))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = car_set_sides_pwm &rArr; motor_set_pwm
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_set_pwm
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_control_update
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_backward
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;car_stop
 </UL>
 
 <P><STRONG><a name="[c6]"></a>hex_value</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, remote.o(i.hex_value))
