@@ -15,12 +15,4 @@ void encoder_start(void);
  */
 int32_t read_encoder_count(TIM_HandleTypeDef *htim);
 
-/* Convert counts measured over sample_period_s into wheel speed (m/s).
- * counts_per_wheel_rev includes encoder resolution, quadrature factor,
- * and gear ratio. A negative count gives a negative speed.
- * Returns 0 when a physical parameter is invalid.
- */
-float encoder_counts_to_mps(int32_t counts, float counts_per_wheel_rev,
-                            float wheel_diameter_m, float sample_period_s);
-
 #endif /* ENCODER_H */

@@ -27,6 +27,8 @@
 /* USER CODE BEGIN Includes */
 #include "remote.h"
 #include "control.h"
+#include "encoder.h"
+#include "car_encoder.h"
 
 /* USER CODE END Includes */
 
@@ -49,11 +51,13 @@
 /* USER CODE BEGIN Variables */
 
 volatile uint32_t remote_stack_free_words = 0;
+volatile uint32_t encoder_stack_free_words = 0;
 
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId remoteTaskHandle;
+osThreadId encoder_taskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -62,6 +66,7 @@ osThreadId remoteTaskHandle;
 
 void StartDefaultTask(void const * argument);
 void StartRemoteTask(void const * argument);
+void Start_encoder_task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -116,6 +121,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(remoteTask, StartRemoteTask, osPriorityNormal, 0, 128);
   remoteTaskHandle = osThreadCreate(osThread(remoteTask), NULL);
 
+  /* definition and creation of encoder_task */
+  osThreadDef(encoder_task, Start_encoder_task, osPriorityNormal, 0, 128);
+  encoder_taskHandle = osThreadCreate(osThread(encoder_task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -160,6 +169,7 @@ void StartRemoteTask(void const * argument)
         remote_poll();
         car_control_update(car_remote);
 
+        // 计算任务栈剩余空间，便于 Keil Watch 查看
         if ((xTaskGetTickCount() - last_check) >= pdMS_TO_TICKS(1000))
         {
             last_check = xTaskGetTickCount();
@@ -172,6 +182,57 @@ void StartRemoteTask(void const * argument)
    
 
   /* USER CODE END StartRemoteTask */
+}
+
+/* USER CODE BEGIN Header_Start_encoder_task */
+/**
+* @brief Function implementing the encoder_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Start_encoder_task */
+void Start_encoder_task(void const * argument)
+{
+  /* USER CODE BEGIN Start_encoder_task */
+  TickType_t last_wake;
+  TickType_t last_stack_check;
+  int32_t counts[CAR_WHEEL_COUNT];
+  float speeds_mps[CAR_WHEEL_COUNT];
+  int i;
+
+  /* 从启动编码器后开始计时，首次采样等待完整的 20 ms。 */
+  encoder_start();
+  last_wake = xTaskGetTickCount();
+  last_stack_check = last_wake;
+
+  for (;;)
+  {
+    //last_wake会自动更新为上次唤醒时间，保证周期性执行
+    vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(20U));
+
+    /* 暂按示例工程的电机/编码器对应关系与符号；需逐轮实测确认。 */
+    counts[CAR_WHEEL_FRONT_LEFT]  = -read_encoder_count(&htim8);
+    counts[CAR_WHEEL_FRONT_RIGHT] = -read_encoder_count(&htim4);
+    counts[CAR_WHEEL_REAR_LEFT]   =  read_encoder_count(&htim1);
+    counts[CAR_WHEEL_REAR_RIGHT]  =  read_encoder_count(&htim3);
+
+    car_encoder_calculate_wheel_speeds(counts, speeds_mps);
+
+    for (i = 0; i < CAR_WHEEL_COUNT; ++i)
+    {
+      encoder_wheel_counts[i] = counts[i];
+      encoder_wheel_speed_mps[i] = speeds_mps[i];
+    }
+
+
+    //计算任务栈剩余空间，便于 Keil Watch 查看
+    if ((TickType_t)(xTaskGetTickCount() - last_stack_check) >= pdMS_TO_TICKS(1000U))
+    {
+      last_stack_check = xTaskGetTickCount();
+      encoder_stack_free_words = uxTaskGetStackHighWaterMark(NULL);
+    }
+  }
+  /* USER CODE END Start_encoder_task */
 }
 
 /* Private application code --------------------------------------------------*/

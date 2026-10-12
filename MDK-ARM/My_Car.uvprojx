@@ -542,6 +542,11 @@
           <GroupName>Application/User/BSP</GroupName>
           <Files>
             <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../bsp/encoder.c</FilePath>
+            </File>
+            <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>../bsp/motor.c</FilePath>
@@ -566,6 +571,11 @@
         <Group>
           <GroupName>Application/User/App</GroupName>
           <Files>
+            <File>
+              <FileName>car_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../app/car_encoder.c</FilePath>
+            </File>
             <File>
               <FileName>control.c</FileName>
               <FileType>1</FileType>

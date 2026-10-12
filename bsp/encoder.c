@@ -26,17 +26,3 @@ int32_t read_encoder_count(TIM_HandleTypeDef *htim)
     }
     return (int32_t)count - 65536;
 }
-
-float encoder_counts_to_mps(int32_t counts, float counts_per_wheel_rev,
-                            float wheel_diameter_m, float sample_period_s)
-{
-    const float pi = 3.1415926f;
-
-    if (counts_per_wheel_rev <= 0.0f || wheel_diameter_m <= 0.0f ||
-        sample_period_s <= 0.0f) {
-        return 0.0f;
-    }
-
-    return ((float)counts / counts_per_wheel_rev) *
-           (pi * wheel_diameter_m) / sample_period_s;
-}

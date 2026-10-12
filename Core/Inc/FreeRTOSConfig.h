@@ -87,7 +87,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelete                  1
 #define INCLUDE_vTaskCleanUpResources        0
 #define INCLUDE_vTaskSuspend                 1
-#define INCLUDE_vTaskDelayUntil              0
+#define INCLUDE_vTaskDelayUntil              1
 #define INCLUDE_vTaskDelay                   1
 #define INCLUDE_xTaskGetSchedulerState       1
 #define INCLUDE_uxTaskGetStackHighWaterMark  1
@@ -135,6 +135,11 @@ standard names. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+/* 编码器任务使用 vTaskDelayUntil；即使 Cube 重新生成默认值，也保持该 API 可用。 */
+#if (INCLUDE_vTaskDelayUntil == 0)
+#undef INCLUDE_vTaskDelayUntil
+#define INCLUDE_vTaskDelayUntil 1
+#endif
 /* USER CODE END Defines */
 
 #endif /* FREERTOS_CONFIG_H */
