@@ -3,8 +3,8 @@
 #include "pid.h"
 #include "stm32f1xx_hal.h"
 
-static int16_t current_left_command_percent;
-static int16_t current_right_command_percent;
+/* 四轮当前目标速度百分比；斜坡按车轮分别限制变化量。 */
+static int16_t current_wheel_command_percent[CAR_WHEEL_COUNT];
 static pid_controller_t wheel_pid[CAR_WHEEL_COUNT];
 static uint8_t speed_control_initialized;
 static volatile uint8_t remote_command_valid;
@@ -46,19 +46,6 @@ static int16_t car_axis_to_percent(int16_t axis, uint8_t max_percent)
     return (int16_t)percent;
 }
 
-/* 左右轮混合后若超出档位上限，保持比例一起缩小。 */
-static void car_limit_sides(int16_t *left, int16_t *right, uint8_t max_percent)
-{
-    int32_t left_abs = (*left < 0) ? -(int32_t)*left : *left;
-    int32_t right_abs = (*right < 0) ? -(int32_t)*right : *right;
-    int32_t largest = (left_abs > right_abs) ? left_abs : right_abs;
-
-    if (largest > max_percent) {
-        *left = (int16_t)(((int32_t)*left * max_percent) / largest);
-        *right = (int16_t)(((int32_t)*right * max_percent) / largest);
-    }
-}
-
 static int16_t car_ramp_percent(int16_t current, int16_t target)
 {
     if (target > current + CAR_SPEED_RAMP_STEP_PERCENT) 
@@ -84,14 +71,14 @@ void car_backward(uint8_t duty)
 
 void car_stop(void)
 {
+    int i;
+
     remote_command_valid = 0U;
     pid_reset_requested = 1U;
-    current_left_command_percent = 0;
-    current_right_command_percent = 0;
-    car_wheel_target_mps[CAR_WHEEL_FRONT_LEFT] = 0.0f;
-    car_wheel_target_mps[CAR_WHEEL_FRONT_RIGHT] = 0.0f;
-    car_wheel_target_mps[CAR_WHEEL_REAR_LEFT] = 0.0f;
-    car_wheel_target_mps[CAR_WHEEL_REAR_RIGHT] = 0.0f;
+    for (i = 0; i < CAR_WHEEL_COUNT; ++i) {
+        current_wheel_command_percent[i] = 0;
+        car_wheel_target_mps[i] = 0.0f;
+    }
     car_set_sides_pwm(0, 0);
 }
 
@@ -176,16 +163,17 @@ void car_speed_control_update(const volatile float target_mps[CAR_WHEEL_COUNT],
 
 
 
- /* 目标速度更新 */
+/* 左摇杆控制车身前后和左右平移，右摇杆左右控制车头旋转。 */
 void car_control_update(car_remote_t remote)
 {
     static uint32_t last_ramp_tick;
     uint32_t now = HAL_GetTick();
     uint8_t max_speed_percent;
     int16_t forward_percent;
+    int16_t strafe_percent;
     int16_t turn_percent;
-    int16_t left_target_percent;
-    int16_t right_target_percent;
+    int16_t wheel_target_percent[CAR_WHEEL_COUNT];
+    int i;
 
     /* 遥控失联直接停车，不等待斜坡减速。 */
     if (remote.valid == 0U) 
@@ -197,14 +185,14 @@ void car_control_update(car_remote_t remote)
 
     max_speed_percent = (remote.l2 != 0U) ? CAR_L2_SPEED_PERCENT :
                                            CAR_NORMAL_SPEED_PERCENT;
+    /* 正值分别表示向前、向车身左侧平移、车头向左旋转。 */
     forward_percent = car_axis_to_percent(remote.left_y, max_speed_percent);
-    turn_percent = car_axis_to_percent(remote.left_x, max_speed_percent);
+    strafe_percent = car_axis_to_percent(remote.left_x, max_speed_percent);
+    turn_percent = car_axis_to_percent(remote.right_x, max_speed_percent);
 
-    /* 向左拨动时 turn_percent 为正，右轮目标速度比左轮快。 */
-    left_target_percent = forward_percent - turn_percent;
-    right_target_percent = forward_percent + turn_percent;
-    car_limit_sides(&left_target_percent, &right_target_percent,
-                    max_speed_percent);
+    /* 根据 car.h 中的 X/O 安装配置，合成并限制四轮目标速度。 */
+    car_mix_mecanum_percent(forward_percent, strafe_percent, turn_percent,
+                            max_speed_percent, wheel_target_percent);
 
     if ((uint32_t)(now - last_ramp_tick) < CAR_SPEED_RAMP_INTERVAL_MS)
     {
@@ -212,21 +200,16 @@ void car_control_update(car_remote_t remote)
     }
     last_ramp_tick = now;
 
-    /* 速度斜坡处理 */
-    current_left_command_percent = car_ramp_percent(current_left_command_percent,
-                                                     left_target_percent);
-    current_right_command_percent = car_ramp_percent(current_right_command_percent,
-                                                      right_target_percent);
-
-    /* 遥控只更新目标轮速；每轮 PWM 由 20 ms 速度环计算。 */
-    car_wheel_target_mps[CAR_WHEEL_FRONT_LEFT] =
-        (float)current_left_command_percent * CAR_MAX_WHEEL_SPEED_MPS / 100.0f;
-    car_wheel_target_mps[CAR_WHEEL_REAR_LEFT] =
-        car_wheel_target_mps[CAR_WHEEL_FRONT_LEFT];
-    car_wheel_target_mps[CAR_WHEEL_FRONT_RIGHT] =
-        (float)current_right_command_percent * CAR_MAX_WHEEL_SPEED_MPS / 100.0f;
-    car_wheel_target_mps[CAR_WHEEL_REAR_RIGHT] =
-        car_wheel_target_mps[CAR_WHEEL_FRONT_RIGHT];
+    /* 每轮独立斜坡；这里只更新目标轮速，PWM 由 20 ms 速度环计算。 */
+    for (i = 0; i < CAR_WHEEL_COUNT; ++i) 
+    {
+        current_wheel_command_percent[i] =
+            car_ramp_percent(current_wheel_command_percent[i],
+                             wheel_target_percent[i]);
+        car_wheel_target_mps[i] =
+            (float)current_wheel_command_percent[i] *
+            CAR_MAX_WHEEL_SPEED_MPS / 100.0f;
+    }
 
     remote_command_valid = 1U;
 }

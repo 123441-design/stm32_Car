@@ -55,7 +55,7 @@ void car_forward(uint8_t duty);
 void car_backward(uint8_t duty);
 void car_stop(void);
 
-/* 左摇杆两轴按幅度生成四轮目标速度；L2 提高速度上限。 */
+/* 左摇杆控制前后/横移，右摇杆左右控制旋转；L2 提高轮速上限。 */
 void car_control_update(car_remote_t remote);
 
 /* 编码器任务启动时初始化一次；每取得一组新的实际轮速后更新一次速度环。 */
