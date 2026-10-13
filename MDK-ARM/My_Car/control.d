@@ -2,7 +2,9 @@ my_car\control.o: ../app/control.c
 my_car\control.o: ../app/control.h
 my_car\control.o: ../app/car.h
 my_car\control.o: D:\KEIL2026\Core\ARM\ARMCC\Bin\..\include\stdint.h
+my_car\control.o: ../app/car_encoder.h
 my_car\control.o: ../bsp/motor.h
+my_car\control.o: ../control/pid.h
 my_car\control.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 my_car\control.o: ../Core/Inc/stm32f1xx_hal_conf.h
 my_car\control.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h

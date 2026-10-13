@@ -167,6 +167,7 @@ void StartRemoteTask(void const * argument)
   for (;;)
     {
         remote_poll();
+        //更新目标速度
         car_control_update(car_remote);
 
         // 计算任务栈剩余空间，便于 Keil Watch 查看
@@ -192,7 +193,7 @@ void StartRemoteTask(void const * argument)
 */
 /* USER CODE END Header_Start_encoder_task */
 void Start_encoder_task(void const * argument)
-{
+{   
   /* USER CODE BEGIN Start_encoder_task */
   TickType_t last_wake;
   TickType_t last_stack_check;
@@ -201,6 +202,7 @@ void Start_encoder_task(void const * argument)
   int i;
 
   /* 从启动编码器后开始计时，首次采样等待完整的 20 ms。 */
+  car_speed_control_init();
   encoder_start();
   last_wake = xTaskGetTickCount();
   last_stack_check = last_wake;
@@ -210,12 +212,13 @@ void Start_encoder_task(void const * argument)
     //last_wake会自动更新为上次唤醒时间，保证周期性执行
     vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(20U));
 
-    /* 暂按示例工程的电机/编码器对应关系与符号；需逐轮实测确认。 */
-    counts[CAR_WHEEL_FRONT_LEFT]  = -read_encoder_count(&htim8);
-    counts[CAR_WHEEL_FRONT_RIGHT] = -read_encoder_count(&htim4);
-    counts[CAR_WHEEL_REAR_LEFT]   =  read_encoder_count(&htim1);
-    counts[CAR_WHEEL_REAR_RIGHT]  =  read_encoder_count(&htim3);
+    /* 编码器方向已按实车校准：车轮向前转时计数为正，向后转时为负。 */
+    counts[CAR_WHEEL_FRONT_LEFT]  =   read_encoder_count(&htim8);
+    counts[CAR_WHEEL_FRONT_RIGHT] =  -read_encoder_count(&htim4);
+    counts[CAR_WHEEL_REAR_LEFT]   =   read_encoder_count(&htim1);
+    counts[CAR_WHEEL_REAR_RIGHT]  =  -read_encoder_count(&htim3);
 
+    /* 计算反馈速度 */
     car_encoder_calculate_wheel_speeds(counts, speeds_mps);
 
     for (i = 0; i < CAR_WHEEL_COUNT; ++i)
@@ -224,6 +227,8 @@ void Start_encoder_task(void const * argument)
       encoder_wheel_speed_mps[i] = speeds_mps[i];
     }
 
+    /* 新的实测轮速到达后，更新四轮 PID 并输出 PWM。 */
+    car_speed_control_update(car_wheel_target_mps, speeds_mps);
 
     //计算任务栈剩余空间，便于 Keil Watch 查看
     if ((TickType_t)(xTaskGetTickCount() - last_stack_check) >= pdMS_TO_TICKS(1000U))

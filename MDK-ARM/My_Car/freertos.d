@@ -45,6 +45,6 @@ my_car\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_grou
 my_car\freertos.o: ../app/remote.h
 my_car\freertos.o: ../app/control.h
 my_car\freertos.o: ../app/car.h
+my_car\freertos.o: ../app/car_encoder.h
 my_car\freertos.o: ../bsp/encoder.h
 my_car\freertos.o: ../Core/Inc/tim.h
-my_car\freertos.o: ../app/car_encoder.h
